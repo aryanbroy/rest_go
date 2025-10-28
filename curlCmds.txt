@@ -1,0 +1,16 @@
+
+// create task
+
+// add one task
+curl -iX POST localhost:8080/task/ \
+-H "Content-Type:application/json"  \
+-d '{"text":"first task", "tags":["todo", "task"], "due":"2016-01-02T15:04:05+00:00"}'
+
+// add second task
+curl -iX POST localhost:8080/task/ \
+-H "Content-Type:application/json"  \
+-d '{"text":"second task", "tags":["gaming", "task"], "due":"2016-01-02T15:04:05+00:00"}'
+
+
+// get all tasks
+curl -X GET localhost:8080/tasks/
