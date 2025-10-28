@@ -59,3 +59,16 @@ func (server *TaskServer) CreateTaskHandler(w http.ResponseWriter, r *http.Reque
 	w.Header().Set("Content-type", "application/json")
 	w.Write(jsonData)
 }
+
+func (server *TaskServer) GetAllTaskskhandler(w http.ResponseWriter, r *http.Request) {
+	var allTasks []taskstore.Task
+	allTasks = server.store.GetAllTasks()
+
+	jsonData, err := json.Marshal(allTasks)
+	if err != nil {
+		http.Error(w, "error decoding all tasks to json object", http.StatusBadRequest)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonData)
+}
