@@ -14,3 +14,6 @@ curl -iX POST localhost:8080/task/ \
 
 // get all tasks
 curl -X GET localhost:8080/tasks/
+
+// get task by id
+curl -X GET localhost:8080/task/1/

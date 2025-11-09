@@ -5,6 +5,7 @@ import (
 	"log"
 	"mime"
 	"net/http"
+	"strconv"
 
 	"github.com/aryanbroy/rest_go/internal/taskstore"
 )
@@ -60,13 +61,42 @@ func (server *TaskServer) CreateTaskHandler(w http.ResponseWriter, r *http.Reque
 	w.Write(jsonData)
 }
 
-func (server *TaskServer) GetAllTaskskhandler(w http.ResponseWriter, r *http.Request) {
+func (server *TaskServer) GetAllTaskshandler(w http.ResponseWriter, r *http.Request) {
 	var allTasks []taskstore.Task
 	allTasks = server.store.GetAllTasks()
 
-	jsonData, err := json.Marshal(allTasks)
+	jsonData, err := json.MarshalIndent(allTasks, "", "  ")
 	if err != nil {
 		http.Error(w, "error decoding all tasks to json object", http.StatusBadRequest)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonData)
+}
+
+func (server *TaskServer) DeleteAllTasksHandler(w http.ResponseWriter, r *http.Request) {
+	server.store.DeleteAllTasks()
+	w.Write([]byte("Deleted all tasks successfuly"))
+}
+
+func (server *TaskServer) GetTaskById(w http.ResponseWriter, r *http.Request) {
+	stringId := r.PathValue("id")
+	id, err := strconv.Atoi(stringId)
+	if err != nil {
+		http.Error(w, "error converting string to int: id", http.StatusBadRequest)
+		return
+	}
+
+	task, err := server.store.GetTask(id)
+	if err != nil {
+		http.Error(w, "error fetching task details", http.StatusBadRequest)
+		return
+	}
+
+	jsonData, err := json.MarshalIndent(task, "", "  ")
+	if err != nil {
+		http.Error(w, "error decoding all tasks to json object", http.StatusBadRequest)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")

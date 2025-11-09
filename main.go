@@ -13,7 +13,9 @@ func main() {
 
 	// mux.HandleFunc("GET /test", api.TestHandler)
 	mux.HandleFunc("POST /task/", server.CreateTaskHandler)
-	mux.HandleFunc("GET /task/", server.GetAllTaskskhandler)
+	mux.HandleFunc("GET /tasks/", server.GetAllTaskshandler)
+	mux.HandleFunc("DELETE /tasks/", server.DeleteAllTasksHandler)
+	mux.HandleFunc("GET /task/{id}/", server.GetTaskById)
 
 	log.Println("Starting server at port :8080...")
 	log.Fatal(http.ListenAndServe(":8080", mux))
