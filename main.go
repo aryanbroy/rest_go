@@ -16,6 +16,9 @@ func main() {
 	mux.HandleFunc("GET /tasks/", server.GetAllTaskshandler)
 	mux.HandleFunc("DELETE /tasks/", server.DeleteAllTasksHandler)
 	mux.HandleFunc("GET /task/{id}/", server.GetTaskById)
+	mux.HandleFunc("DELETE /task/{id}/", server.DeleteTaskHandler)
+	mux.HandleFunc("GET /tag/{tag}/", server.TagHandler)
+	mux.HandleFunc("GET /tag/{year}/{month}/{day}/", server.DueHandler)
 
 	log.Println("Starting server at port :8080...")
 	log.Fatal(http.ListenAndServe(":8080", mux))

@@ -4,12 +4,12 @@
 // add one task
 curl -iX POST localhost:8080/task/ \
 -H "Content-Type:application/json"  \
--d '{"text":"first task", "tags":["todo", "task"], "due":"2016-01-02T15:04:05+00:00"}'
+-d '{"text":"first task", "tags":["todo", "task"], "due":"2002-03-01T00:00:00+00:00"}'
 
 // add second task
 curl -iX POST localhost:8080/task/ \
 -H "Content-Type:application/json"  \
--d '{"text":"second task", "tags":["gaming", "task"], "due":"2016-01-02T15:04:05+00:00"}'
+-d '{"text":"second task", "tags":["gaming", "task"], "due":"2016-01-02T00:00:00+00:00"}'
 
 
 // get all tasks
@@ -17,3 +17,12 @@ curl -X GET localhost:8080/tasks/
 
 // get task by id
 curl -X GET localhost:8080/task/1/
+
+// delete task by id
+curl -X DELETE localhost:8080/task/0/
+
+// get task by tag id
+curl -X GET localhost:8080/tag/todo/
+
+// get task by due date
+curl -X GET localhost:8080/tag/2002/03/01/
