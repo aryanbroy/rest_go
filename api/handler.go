@@ -26,6 +26,18 @@ func NewTaskServer() *TaskServer {
 //
 // }
 
+func renderJSON(w http.ResponseWriter, v any) {
+	jsonData, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		errMsg := fmt.Sprintf("error marshaling json: %s", err.Error())
+		http.Error(w, errMsg, http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonData)
+}
+
 func (server *TaskServer) CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	var task taskstore.Task
 
@@ -50,30 +62,21 @@ func (server *TaskServer) CreateTaskHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	id := server.store.CreateTask(task.Text, task.Tags, task.Due)
+
 	type ResponseId struct {
 		Id int `json:"id"`
 	}
-	jsonData, err := json.Marshal(ResponseId{Id: id})
-	if err != nil {
-		http.Error(w, "error marshaling json data", http.StatusBadRequest)
-		return
-	}
 
-	w.Header().Set("Content-type", "application/json")
-	w.Write(jsonData)
+	resId := ResponseId{Id: id}
+
+	renderJSON(w, resId)
 }
 
 func (server *TaskServer) GetAllTaskshandler(w http.ResponseWriter, r *http.Request) {
 	var allTasks []taskstore.Task
 	allTasks = server.store.GetAllTasks()
 
-	jsonData, err := json.MarshalIndent(allTasks, "", "  ")
-	if err != nil {
-		http.Error(w, "error decoding all tasks to json object", http.StatusBadRequest)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonData)
+	renderJSON(w, allTasks)
 }
 
 func (server *TaskServer) DeleteAllTasksHandler(w http.ResponseWriter, r *http.Request) {
@@ -95,14 +98,7 @@ func (server *TaskServer) GetTaskById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonData, err := json.MarshalIndent(task, "", "  ")
-	if err != nil {
-		http.Error(w, "error decoding all tasks to json object", http.StatusBadRequest)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonData)
+	renderJSON(w, task)
 }
 
 func (server *TaskServer) DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
@@ -128,14 +124,7 @@ func (server *TaskServer) TagHandler(w http.ResponseWriter, r *http.Request) {
 	tag := r.PathValue("tag")
 	task := server.store.GetTasksByTag(tag)
 
-	jsonData, err := json.MarshalIndent(task, "", "  ")
-	if err != nil {
-		errMsg := fmt.Sprintf("Error marshaling json data: %v", err.Error())
-		http.Error(w, errMsg, http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonData)
+	renderJSON(w, task)
 }
 
 func (server *TaskServer) DueHandler(w http.ResponseWriter, r *http.Request) {
@@ -153,13 +142,5 @@ func (server *TaskServer) DueHandler(w http.ResponseWriter, r *http.Request) {
 
 	task := server.store.GetTasksByDueDate(time)
 
-	jsonData, err := json.MarshalIndent(task, "", "  ")
-	if err != nil {
-		errMsg := fmt.Sprintf("Error marshaling json data: %v", err.Error())
-		http.Error(w, errMsg, http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonData)
+	renderJSON(w, task)
 }
